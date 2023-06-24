@@ -2,7 +2,19 @@
 
 ## Introduction
 
-In this document, we review the GATT SERVER example code which implements a Bluetooth Low Energy (BLE) Generic Attribute Profile (GATT) Server on the ESP32. This example is designed around two Application Profiles and a series of events that are handled in order to execute a sequence of configuration steps, such as defining advertising parameters, updating connection parameters and creating services and characteristics. In addition, this example handles read and write events, including a Write Long Characteristic request, which divides the incoming data into chunks so that the data can fit in the Attribute Protocol (ATT) message. This document follows the program workflow and breaks down the code in order to make sense of every section and reasoning behind the implementation.
+In this document, we review the GATT SERVER example code which implements a Bluetooth Low Energy (BLE) Generic Attribute Profile (GATT) Server on the ESP32. 
+This example is designed around two Application Profiles and a series of events that are handled in order to execute a sequence of configuration steps, 
+such as defining advertising parameters, updating connection parameters and creating services and characteristics. 
+In addition, this example handles read and write events, including a Write Long Characteristic request, 
+which divides the incoming data into chunks so that the data can fit in the Attribute Protocol (ATT) message. 
+This document follows the program workflow and breaks down the code in order to make sense of every section and reasoning behind the implementation.
+
+在本文档中，我们回顾了 GATT SERVER 示例代码，该代码在 ESP32 上实现了蓝牙低功耗 (BLE) 通用属性配置文件 (GATT) 服务器。
+此示例是围绕两个应用程序配置文件和一系列事件设计的，这些事件是为了执行一系列配置步骤而处理的，
+例如定义广告参数、更新连接参数以及创建服务和特征。
+此外，此示例处理读取和写入事件，包括写入长特征请求，
+它将传入数据划分为块，以便数据能够适合属性协议 (ATT) 消息。
+本文档遵循程序工作流程并分解代码，以便理解每个部分以及实现背后的推理。
 
 ## Includes
 
@@ -26,12 +38,18 @@ First, let’s take a look at the includes:
 #include "esp_gatt_common_api.h"
 #include "sdkconfig.h"
 ```
-These includes are required for the FreeRTOS and underlaying system components to run, including the logging functionality and a library to store data in non-volatile flash memory. We are interested in `"esp_bt.h"`, `"esp_bt_main.h"`, `"esp_gap_ble_api.h"` and `"esp_gatts_api.h"`, which expose the BLE APIs required to implement this example.
+These includes are required for the FreeRTOS and underlaying system components to run, including the logging functionality and a library to store data in non-volatile flash memory. 
+We are interested in `"esp_bt.h"`, `"esp_bt_main.h"`, `"esp_gap_ble_api.h"` and `"esp_gatts_api.h"`, which expose the BLE APIs required to implement this example.
 
 * `esp_bt.h`: implements BT controller and VHCI configuration procedures from the host side.
 * `esp_bt_main.h`: implements initialization and enabling of the Bluedroid stack.
 * `esp_gap_ble_api.h`: implements GAP configuration, such as advertising and connection parameters.
 * `esp_gatts_api.h`: implements GATT configuration, such as creating services and characteristics.
+
+* `esp_bt.h`：从主机端实现 BT 控制器和 VHCI 配置程序。
+* `esp_bt_main.h`：实现 Bluedroid 堆栈的初始化和启用。
+* `esp_gap_ble_api.h`：实现 GAP 配置，例如广告和连接参数。
+* `esp_gatts_api.h`：实现GATT配置，例如创建服务和特征。
 
 ## Main Entry Point
 
@@ -100,7 +118,8 @@ The entry point to this example is the app_main() function:
     return;
 }
 ```
-The main function starts by initializing the non-volatile storage library. This library allows to save key-value pairs in flash memory and is used by some components such as the Wi-Fi library to save the SSID and password:
+The main function starts by initializing the non-volatile storage library. 
+This library allows to save key-value pairs in flash memory and is used by some components such as the Wi-Fi library to save the SSID and password:
 
 ```c
 ret = nvs_flash_init();
